@@ -1,0 +1,124 @@
+warning: Cannot check if git requires authentication.
+apiVersion: v1
+items:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: lab11
+      app.kubernetes.io/component: lab11
+      app.kubernetes.io/instance: lab11
+    name: lab11
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: lab11
+      app.kubernetes.io/component: lab11
+      app.kubernetes.io/instance: lab11
+    name: lab11
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: lab11:latest
+    postCommit: {}
+    resources: {}
+    source:
+      git:
+        uri: https://github.com/chrostmarcin/simpleapp
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: php:8.0-ubi8
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: B5N0x3dEWfk39Q9mDW7V
+      type: GitHub
+    - generic:
+        secret: asfJFT3ZhJSq5Vm0F2E1
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"lab11:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"lab11\")].image"}]'
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: lab11
+      app.kubernetes.io/component: lab11
+      app.kubernetes.io/instance: lab11
+    name: lab11
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        deployment: lab11
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deployment: lab11
+      spec:
+        containers:
+        - image: ' '
+          name: lab11
+          ports:
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: lab11
+      app.kubernetes.io/component: lab11
+      app.kubernetes.io/instance: lab11
+    name: lab11
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    selector:
+      deployment: lab11
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
